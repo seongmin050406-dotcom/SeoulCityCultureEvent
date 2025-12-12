@@ -1,48 +1,46 @@
 window.onload = function () {
-  getEvent();
+  loadJSONP();
 };
 
 const SERVICE_KEY = "5562556d6279736d31303371487a5343";
-
-// GitHub Pages 전용 HTTPS + CORS 프록시
-const API_URL =
-  `https://thingproxy.freeboard.io/fetch/https://openapi.seoul.go.kr:8088/${SERVICE_KEY}/json/culturalEventInfo/1/1000/`;
 
 const dataDiv = document.getElementById("dataDiv");
 const watchButton = document.getElementById("what");
 const gu = document.getElementById("gu");
 
-async function getEvent() {
-  dataDiv.innerHTML = "";
+let eventList = [];
 
-  try {
-    console.log("API 요청:", API_URL);
+/*
+  서울 OpenAPI JSONP 호출
+*/
+function loadJSONP() {
+  const script = document.createElement("script");
+  script.src =
+    `https://openapi.seoul.go.kr:8088/${SERVICE_KEY}/json/culturalEventInfo/1/1000/?callback=handleResponse`;
+  document.body.appendChild(script);
+}
 
-    const response = await fetch(API_URL);
-    const data = await response.json();
-
-    if (!data.culturalEventInfo) {
-      dataDiv.innerHTML = "데이터 로드 실패 (API 응답 오류)";
-      return;
-    }
-
-    const eventList = data.culturalEventInfo.row;
-
-    buildCategoryOptions(eventList);
-    showEvents(eventList);
-
-    watchButton.onclick = () => {
-      const selected = gu.value;
-      const filtered = selected
-        ? eventList.filter(e => e.CODENAME === selected)
-        : eventList;
-      showEvents(filtered);
-    };
-
-  } catch (err) {
-    console.error(err);
-    dataDiv.innerHTML = "데이터 로드 실패 (네트워크 오류)";
+/*
+  JSONP 콜백
+*/
+function handleResponse(data) {
+  if (!data || !data.culturalEventInfo) {
+    dataDiv.innerHTML = "데이터 로드 실패";
+    return;
   }
+
+  eventList = data.culturalEventInfo.row;
+
+  buildCategoryOptions(eventList);
+  showEvents(eventList);
+
+  watchButton.onclick = () => {
+    const selected = gu.value;
+    const filtered = selected
+      ? eventList.filter(e => e.CODENAME === selected)
+      : eventList;
+    showEvents(filtered);
+  };
 }
 
 function buildCategoryOptions(list) {
@@ -74,6 +72,7 @@ function showEvents(list) {
       const img = document.createElement("img");
       img.src = event.MAIN_IMG;
       img.className = "event-poster";
+      img.alt = event.TITLE;
       card.appendChild(img);
     }
 
@@ -84,7 +83,12 @@ function showEvents(list) {
       <h6>${event.TITLE}</h6>
       <p>${event.DATE}</p>
       <p>${event.PLACE}</p>
-      <a class="btn btn-primary mt-2" href="${event.ORG_LINK}" target="_blank">홈페이지 바로가기</a>
+      <a class="btn btn-primary mt-2"
+         href="${event.ORG_LINK}"
+         target="_blank"
+         rel="noopener noreferrer">
+         홈페이지 바로가기
+      </a>
     `;
 
     card.appendChild(body);
