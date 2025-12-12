@@ -9,7 +9,7 @@ const SERVICE_KEY = "5562556d6279736d31303371487a5343";
   - https 사용
   - CORS 프록시(allorigins) 사용
 */
-const API_URL = `https://api.allorigins.win/raw?url=https://openapi.seoul.go.kr:8088/${SERVICE_KEY}/json/culturalEventInfo/1/1000/`;
+const API_URL = `https://thingproxy.freeboard.io/fetch/https://openapi.seoul.go.kr:8088/${SERVICE_KEY}/json/culturalEventInfo/1/1000/`;
 
 const dataDiv = document.getElementById("dataDiv");
 const watchButton = document.getElementById("what");
@@ -93,3 +93,4 @@ function showEvents(list) {
     dataDiv.appendChild(card);
   });
 }
+
