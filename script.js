@@ -5,7 +5,7 @@ window.onload = () => {
 
 // CORS 프록시 없이 직접 호출
 const SERVICE_KEY = "794a54587279736d36357062427047";
-const API_URL = `http://openapi.seoul.go.kr:8088/${SERVICE_KEY}/json/culturalEventInfo/1/1000/`;
+const API_URL = `https://openapi.seoul.go.kr:8088/${SERVICE_KEY}/json/culturalEventInfo/1/1000/`;
 
 let allEvents = [];
 
@@ -123,3 +123,4 @@ function searchEvents() {
   
   dataDiv.innerHTML = html;
 }
+
